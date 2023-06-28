@@ -47,17 +47,32 @@ defmodule Cards do
     hand in deck
   end
 
+  def deal(deck, hand_size) do
+    Enum.split(deck, hand_size)
+  end
+
   def save(deck, filename) do
     binary = :erlang.term_to_binary(deck)
     File.write(filename, binary)
   end
 
   def load(filename) do
-    {status, binary} = File.read(filename)
-
-    case status do
-      :ok -> :erlang.binary_to_term binary
-      :error -> "That file does not exist"
+    case File.read(filename) do
+      {:ok, binary} -> :erlang.binary_to_term binary
+      {:error, _reason} -> "That file does not exist"
     end
+  end
+
+  def create_hand(hand_size) do
+    # Calling 3 methods, create, shuffle and deal
+    # Solution 1
+    # deck = Cards.create_deck
+    # deck = Cards.shuffle(deck)
+    # hand = Cards.deal(deck, hand_size)
+
+    # Solution 2 using Pipe Operator
+    Cards.create_deck
+    |> Cards.shuffle
+    |> Cards.deal(hand_size)
   end
 end
